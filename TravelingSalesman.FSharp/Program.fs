@@ -8,13 +8,15 @@ let rec permute = function
     | [] -> [[]]
     | e::xs -> List.collect (distribute e) (permute xs)
 
-let calculateTotalDistance (cities:int list list) (path:int list) =
-    let mutable sum = 0
-    for i = 0 to path.Length - 2 do
-        let previous = path.[i]
-        let next = path.[i+1]
-        sum <- sum + cities.[previous].[next]
-    sum
+let rec pair = function
+    | fst::snd::xs -> (fst, snd) :: pair (snd::xs)
+    | _ -> []
+
+let calculateTotalDistance (cities:int array array) path =
+    path
+    |> pair
+    |> List.map (fun (previous, next) -> cities.[previous].[next])
+    |> List.reduce (+)
 
 let findGreedyPath (cities:int list list) =
 
