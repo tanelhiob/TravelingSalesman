@@ -1,4 +1,6 @@
-﻿let rec distribute e = function
+﻿open Cities
+
+let rec distribute e = function
     | [] -> [[e]]
     | x::xs' as xs -> (e::xs)::[for xs in distribute e xs' -> x::xs]
 
@@ -6,7 +8,7 @@ let rec permute = function
     | [] -> [[]]
     | e::xs -> List.collect (distribute e) (permute xs)
 
-let calculateTotalDistance (cities:int array array) (path:int list) =
+let calculateTotalDistance (cities:int list list) (path:int list) =
     let mutable sum = 0
     for i = 0 to path.Length - 2 do
         let previous = path.[i]
@@ -14,7 +16,7 @@ let calculateTotalDistance (cities:int array array) (path:int list) =
         sum <- sum + cities.[previous].[next]
     sum
 
-let findGreedyPath (cities:int array array) =
+let findGreedyPath (cities:int list list) =
 
     let rec findGreedyPathRecursive (unvisitedCities: int list) currentCity =
 
@@ -29,7 +31,7 @@ let findGreedyPath (cities:int array array) =
     let path = findGreedyPathRecursive [0 .. cities.Length - 1] startingCity
     path @ [0]
 
-let findBestPath (cities:int array array) =
+let findBestPath (cities:int list list) =
 
     let permutated = permute [1 .. cities.Length - 1]
     let allPaths = permutated |> List.map (fun p -> [0] @ p @ [0])
@@ -37,9 +39,7 @@ let findBestPath (cities:int array array) =
 
     bestPath
 
-
-
-let findBestOptimalPath (cities:int array array) =
+let findBestOptimalPath (cities:int list list) =
 
     let mutable bestLength = System.Int32.MaxValue
 
@@ -78,22 +78,18 @@ let findBestOptimalPath (cities:int array array) =
 [<EntryPoint>]
 let main _ = 
 
-    let cities = [|
-        [| 0; 4; 1 |];
-        [| 3; 0; 5 |];
-        [| 2; 6; 0 |];
-    |]
+    let cities = loadCities "Data\\eesti.in"
 
     let greedyPath = findGreedyPath cities
     let greedyTotalDistance = calculateTotalDistance cities greedyPath
     printfn "%A %i" greedyPath greedyTotalDistance
 
-    let bestPath = findBestPath cities
-    let bestPathTotalDistance = calculateTotalDistance cities bestPath
-    printfn "%A %i" bestPath bestPathTotalDistance
+    //let bestPath = findBestPath cities
+    //let bestPathTotalDistance = calculateTotalDistance cities bestPath
+    //printfn "%A %i" bestPath bestPathTotalDistance
 
-    let bestOptimalPath = findBestOptimalPath cities
-    let bestOptimalPathTotalDistance = calculateTotalDistance cities bestPath
-    printfn "%A %i" bestOptimalPath bestOptimalPathTotalDistance
+    //let bestOptimalPath = findBestOptimalPath cities
+    //let bestOptimalPathTotalDistance = calculateTotalDistance cities bestPath
+    //printfn "%A %i" bestOptimalPath bestOptimalPathTotalDistance
 
     0 // exit gracefully
