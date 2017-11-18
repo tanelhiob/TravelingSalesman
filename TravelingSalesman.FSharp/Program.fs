@@ -12,7 +12,7 @@ let rec pair = function
     | fst::snd::xs -> (fst, snd) :: pair (snd::xs)
     | _ -> []
 
-let calculateTotalDistance (cities:int array array) path =
+let calculateTotalDistance (cities:int list list) path =
     path
     |> pair
     |> List.map (fun (previous, next) -> cities.[previous].[next])
